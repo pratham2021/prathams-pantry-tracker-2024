@@ -10,10 +10,7 @@ import Typography from '@mui/material/Typography';
 import { Box } from '@mui/material';
 import SearchBar from '../components/SearchBar';
 
-const canBeConvertedToInteger = (value) => {
-  const parsed = parseInt(value, 10);
-  return !isNaN(parsed) && parsed.toString() === value.trim();
-};
+
 
 export default function Home() {
 
@@ -21,8 +18,55 @@ export default function Home() {
   const [searchQuery, setSearchQuery] = useState('');
   const [searchItems, setSearchItems] = useState([]);
 
-  const handleSearchQueryChange = (event) => {
+  const canBeConvertedToInteger = (value) => {
+    const trimmedValue = value.trim();
+    const parsedValue = parseFloat(trimmedValue);
+    return !isNaN(parsedValue) && isFinite(parsedValue);
+  };
+
+  function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        // Generate a random index between 0 and i
+        const j = Math.floor(Math.random() * (i + 1));
+        
+        // Swap elements at indices i and j
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+  }
+
+  const handleSearchQueryChange = async (event) => {
     setSearchQuery(event.target.value);
+
+    if (searchQuery.trim() === '') {
+      setSearchItems([]);
+      return;
+    }
+
+    try {
+      let q;
+      let searchItemsArray = [];
+
+      if (canBeConvertedToInteger(searchQuery)) {
+        const numberQuery = parseInt(searchQuery, 10);
+        q = query(collection(db, 'items'), where('price', '==', numberQuery));
+      }
+      else {
+        q = query(collection(db, 'items'), where('name', '==', searchQuery));
+      }
+
+      const querySnapshot = await getDocs(q);
+
+      querySnapshot.forEach((doc) => {
+          searchItemsArray.push({...doc.data(), id: doc.id})
+      })
+      
+      let shuffledArray = shuffleArray(searchItemsArray.slice());
+      setSearchItems(shuffledArray);
+    }
+    catch (error) {
+      console.error('Error fetching documents: ', error)
+    }
   };
 
   const handleSearch = async () => {
@@ -37,10 +81,10 @@ export default function Home() {
 
       if (canBeConvertedToInteger(searchQuery)) {
         const numberQuery = parseInt(searchQuery, 10);
-        q = query(collection(db, 'items'), where('price', '==', numberQuery));
+        q = query(collection(db, 'items'), where('price', '==', searchQuery));
       }
       else {
-          q = query(collection(db, 'items'), where('name', '==', searchQuery));
+        q = query(collection(db, 'items'), where('name', '==', searchQuery));
       }
 
       const querySnapshot = await getDocs(q);
@@ -48,8 +92,9 @@ export default function Home() {
       querySnapshot.forEach((doc) => {
           searchItemsArray.push({...doc.data(), id: doc.id})
       })
-
-      setSearchItems(searchItemsArray);
+      
+      let shuffledArray = shuffleArray(searchItemsArray.slice());
+      setSearchItems(shuffledArray);
     }
     catch (error) {
       console.error('Error fetching documents: ', error)
@@ -64,8 +109,9 @@ export default function Home() {
       querySnapshot.forEach((doc) => {
           itemsArray.push({...doc.data(), id: doc.id});
       });
-  
-      setItems(itemsArray);
+
+      let shuffledItems = shuffleArray(itemsArray.slice());
+      setItems(shuffledItems);
   
       // Read total from itemsArray
       return () => unsubscribe();
