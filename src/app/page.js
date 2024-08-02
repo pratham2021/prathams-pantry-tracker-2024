@@ -125,7 +125,7 @@ export default function Home() {
   return (
     <Container align='center' style={{ marginTop: '20px' }}>
       <Typography variant="h4" sx={{ flexGrow: 1 }} align='center'>
-          Welcome to Pratham's Pantry
+          Welcome to Pratham&apos;s Pantry
       </Typography>
       <Typography variant="h6" sx={{ flexGrow: 1 }} align='center' style={{ marginTop: '5px' }}>
           Get started by adding an item
