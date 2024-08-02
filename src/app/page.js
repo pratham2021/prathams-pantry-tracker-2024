@@ -68,11 +68,6 @@ export default function Home() {
       setItems(itemsArray);
   
       // Read total from itemsArray
-      const calculateTotal = () => {
-        const totalPrice = itemsArray.reduce((sum, item) => sum + parseFloat(item.price), 0);
-        setTotal(totalPrice);
-      }
-      calculateTotal();
       return () => unsubscribe();
     });
   }, [])
