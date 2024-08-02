@@ -6,7 +6,7 @@ import ItemCard from '../components/ItemCard';
 import PantryForm from './PantryForm.js';
 import { collection, query, where, getDocs, onSnapshot, deleteDoc, doc } from 'firebase/firestore';
 import { db } from './firebase';
-import { Typography } from '@mui/material/Typography';
+import Typography from '@mui/material/Typography';
 import { Box } from '@mui/material';
 import SearchBar from '../components/SearchBar';
 
